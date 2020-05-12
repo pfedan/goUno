@@ -342,7 +342,12 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 
 	if len(candidateIndices) == 0 {
 		g.playerDrawsCard(g.activePlayer)
-		return false
+		candidates = g.getCardCandidates()
+		if len(candidates) == 0 {
+			return false
+		} else {
+			candidateIndices = append(candidateIndices, candidates[0].index)
+		}
 	}
 
 	playedCardIndex := candidateIndices[rand.Intn(len(candidateIndices))]
