@@ -140,6 +140,28 @@ func (d *Deck) shuffle(s ShuffleSettings) {
 	}
 }
 
+func (p *Player) getStrongestColor() Color {
+	cnt := make([]int, 4)
+
+	for _, el := range p.hand {
+		if el.color >= 1 {
+			cnt[el.color-1]++
+		}
+	}
+
+	max := 0
+	maxIndex := -1
+	for i, value := range cnt {
+		if value > max {
+			max = value
+			maxIndex = i
+		}
+	}
+
+	return Color(maxIndex + 1)
+
+}
+
 func (g *UnoGame) generateNewDeck() {
 	g.drawPile.cards = make([]Card, 108)
 
@@ -177,7 +199,7 @@ func (g *UnoGame) playerDrawsCard(playerNumber int) {
 	g.players[playerNumber].hand = append(g.players[playerNumber].hand, g.drawPile.cards[0])
 	g.drawPile.cards = g.drawPile.cards[1:]
 
-	fmt.Printf("Player %s: draws card: %+v\n", g.players[playerNumber].name, g.players[playerNumber].hand[len(g.players[playerNumber].hand)-1])
+	fmt.Printf("Player %s draws card: %+v\n", g.players[playerNumber].name, g.players[playerNumber].hand[len(g.players[playerNumber].hand)-1])
 
 	if len(g.drawPile.cards) == 0 {
 		g.drawPile.cards = append(g.drawPile.cards, g.discardPile.cards[1:]...)
@@ -189,10 +211,10 @@ func (g *UnoGame) playerDrawsCard(playerNumber int) {
 			deckSize:                  len(g.drawPile.cards),
 			repetitionCount:           1,
 			preShuffleDivPos:          0.5,
-			preShuffleDivUncertainty:  10,
+			preShuffleDivUncertainty:  len(g.drawPile.cards) - 1,
 			doPostShuffleDiv:          true,
 			postShuffleDivPos:         0.5,
-			postShuffleDivUncertainty: len(g.drawPile.cards),
+			postShuffleDivUncertainty: len(g.drawPile.cards) - 1,
 			riffleRange:               2,
 		}
 
@@ -256,7 +278,9 @@ func (g *UnoGame) getNextPlayerIndex() int {
 }
 
 func (g *UnoGame) setNextPlayer() {
-	g.activePlayer = g.getNextPlayerIndex()
+	if len(g.players[g.activePlayer].hand) > 0 {
+		g.activePlayer = g.getNextPlayerIndex()
+	}
 }
 
 func (g *UnoGame) getCardCandidates() []CardCandidate {
@@ -281,6 +305,24 @@ func (g *UnoGame) getCardCandidates() []CardCandidate {
 }
 
 func (g *UnoGame) scoreCandidates(candidates []CardCandidate, s Strategy) []CardCandidate {
+	switch s {
+	case StrategyAggressive:
+		for i, c := range candidates {
+			if g.players[g.activePlayer].hand[c.index].value >= 100 {
+				candidates[i].score++
+			}
+		}
+	case StrategyChangeColor:
+	case StrategyKeepColor:
+		strongColor := g.players[g.activePlayer].getStrongestColor()
+		for i, c := range candidates {
+			if g.players[g.activePlayer].hand[c.index].color == strongColor {
+				candidates[i].score++
+			}
+		}
+	case StrategyRandom:
+	default:
+	}
 	return candidates
 }
 
@@ -291,19 +333,19 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 			maxScore = c.score
 		}
 	}
-	for i, c := range candidates {
-		if c.score < maxScore {
-			candidates[i] = candidates[len(candidates)-1] // Copy last element to index i.
-			candidates = candidates[:len(candidates)-1]   // Truncate slice.
+	var candidateIndices = make([]int, 0)
+	for _, c := range candidates {
+		if c.score == maxScore {
+			candidateIndices = append(candidateIndices, c.index)
 		}
 	}
 
-	if len(candidates) == 0 {
+	if len(candidateIndices) == 0 {
 		g.playerDrawsCard(g.activePlayer)
 		return false
 	}
 
-	playedCardIndex := candidates[rand.Intn(len(candidates))].index
+	playedCardIndex := candidateIndices[rand.Intn(len(candidateIndices))]
 	playedCardValue := g.players[g.activePlayer].hand[playedCardIndex].value
 
 	g.discardPile.cards = append([]Card{g.players[g.activePlayer].hand[playedCardIndex]}, g.discardPile.cards...)
@@ -311,38 +353,39 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 	lenHand := len(g.players[g.activePlayer].hand)
 	g.players[g.activePlayer].hand[playedCardIndex] = g.players[g.activePlayer].hand[lenHand-1] // Copy last element to index i.
 	g.players[g.activePlayer].hand = g.players[g.activePlayer].hand[:lenHand-1]                 // Truncate slice.
+	lenHand--
 
 	g.forcedColor = NoColor
 
+	if lenHand == 1 {
+		fmt.Printf("Player %s: UNO!\n", g.players[g.activePlayer].name)
+	}
 	fmt.Printf("Player %s plays %+v\n", g.players[g.activePlayer].name, g.discardPile.cards[0])
 
-	//TODO React to played Card
 	switch playedCardValue {
 	case SkipCard:
-		g.setNextPlayer()
+		g.setNextPlayer() // skip next player
 	case ReverseCard:
 		g.direction = !g.direction
 	case DrawTwoCard:
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
+		g.setNextPlayer() // skip next player
 	case WildCard:
 		g.forcedColor = Color(rand.Intn(len(candidates))) + 1
-		fmt.Printf("Player %s: WildCard wish: %d\n", g.players[g.activePlayer].name, g.forcedColor)
+		fmt.Printf("Player %s: WildCard wish: %s\n", g.players[g.activePlayer].name, colorNames[g.forcedColor])
 	case WildDrawFourCard:
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.forcedColor = Color(rand.Intn(len(candidates))) + 1
-		fmt.Printf("Player %s: WildCard wish: %d\n", g.players[g.activePlayer].name, g.forcedColor)
+		fmt.Printf("Player %s: WildCard wish: %s\n", g.players[g.activePlayer].name, colorNames[g.forcedColor])
+		g.setNextPlayer() // skip next player
 	}
 
 	switch lenHand {
-	case 2:
-		fmt.Printf("Player %s: UNO!\n", g.players[g.activePlayer].name)
-		return false
-	case 1:
-		fmt.Printf("Player %s: WON!\n", g.players[g.activePlayer].name)
+	case 0:
 		return true
 	default:
 		return false
@@ -350,8 +393,9 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 }
 
 func (g *UnoGame) playOneTurn() bool {
+	fmt.Printf("Hands: %s(%d), %s(%d), %s(%d)\n", g.players[0].name, len(g.players[0].hand), g.players[1].name, len(g.players[1].hand), g.players[2].name, len(g.players[2].hand))
 	candidates := g.getCardCandidates()
-	candidates = g.scoreCandidates(candidates, StrategyRandom)
+	candidates = g.scoreCandidates(candidates, g.players[g.activePlayer].strategy)
 	if g.playOutCard(candidates) {
 		return true
 	}
@@ -368,19 +412,30 @@ func main() {
 		discardPile:  Deck{nil},
 		direction:    true,
 		activePlayer: 0,
-		forcedColor:  -1,
+		forcedColor:  NoColor,
 	}
-	g.initialize([]string{"A", "B", "C"})
-	//fmt.Print(g)
 
-	stopGame := false
-	for i := 1; !stopGame; i++ {
-		fmt.Printf("\nTurn %d:\n", i)
-		stopGame = g.playOneTurn()
-		if stopGame {
-			break
+	cnt := make([]int, 3)
+
+	for round := 0; round < 1; round++ {
+		g.initialize([]string{"Christin", "Julia", "Daniel"})
+
+		g.players[2].strategy = StrategyKeepColor
+
+		stopGame := false
+		for i := 1; !stopGame; i++ {
+			fmt.Printf("\nTurn %d:\n", i)
+			stopGame = g.playOneTurn()
+			if stopGame {
+				break
+			}
 		}
+
+		cnt[g.activePlayer]++
+
+		fmt.Printf("Game over, Player %s has won.\n\n", g.players[g.activePlayer].name)
 	}
 
-	fmt.Printf("Game over, Player %s has won.", g.players[g.activePlayer].name)
+	fmt.Printf("%+v", cnt)
+
 }
