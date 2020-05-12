@@ -203,6 +203,9 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 		g.setNextPlayer() // skip next player
 	case ReverseCard:
 		g.direction = !g.direction
+		if len(g.players) == 2 {
+			g.setNextPlayer() // skip next player
+		}
 	case DrawTwoCard:
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
