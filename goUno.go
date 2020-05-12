@@ -409,7 +409,7 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 }
 
 func (g *UnoGame) playOneTurn() bool {
-	log.Printf("Hands: %s(%d), %s(%d), %s(%d)\n", g.players[0].name, len(g.players[0].hand), g.players[1].name, len(g.players[1].hand), g.players[2].name, len(g.players[2].hand))
+	// log.Printf("Hands: %s(%d), %s(%d), %s(%d)\n", g.players[0].name, len(g.players[0].hand), g.players[1].name, len(g.players[1].hand), g.players[2].name, len(g.players[2].hand))
 	candidates := g.getCardCandidates()
 	candidates = g.scoreCandidates(candidates, g.players[g.activePlayer].strategy)
 	if g.playOutCard(candidates) {
@@ -434,18 +434,21 @@ func main() {
 		forcedColor:  NoColor,
 	}
 
-	cnt := make([]int, 3)
+	cnt := make([]int, 4)
+	turns := map[int]int{}
 
 	for round := 0; round < 1; round++ {
-		g.initialize([]string{"Christin", "Julia", "Daniel"})
+		g.initialize([]string{"Christin", "Julia", "Daniel", "Paul"})
 
-		g.players[2].strategy = StrategyKeepColor
+		// g.players[2].strategy = StrategyAggressive + StrategyKeepColor
+		// g.players[2].strategy = StrategyKeepColor
 
 		stopGame := false
 		for i := 1; !stopGame; i++ {
 			log.Printf("Turn %d:\n", i)
 			stopGame = g.playOneTurn()
 			if stopGame {
+				turns[i]++
 				break
 			}
 		}
@@ -458,5 +461,6 @@ func main() {
 	log.SetOutput(os.Stderr)
 
 	log.Printf("%+v", cnt)
+	log.Printf("%+v", turns)
 
 }
