@@ -27,7 +27,7 @@ func main() {
 	turns := map[int]int{}
 
 	for round := 0; round < 1; round++ {
-		g.Initialize([]string{"Christin", "Julia", "Daniel", "Paul"})
+		g.Initialize([]string{"Christin", "Julia", "Daniel"})
 
 		// g.players[2].strategy = StrategyAggressive + StrategyKeepColor
 		// g.players[2].strategy = StrategyKeepColor
@@ -49,6 +49,6 @@ func main() {
 
 	log.SetOutput(os.Stderr)
 
-	log.Printf("%+v", cnt)
-	log.Printf("%+v", turns)
+	log.Printf("%+v\n", cnt)
+	log.Printf("%+v\n", turns)
 }
