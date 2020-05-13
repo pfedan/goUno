@@ -234,13 +234,36 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 	}
 }
 
+func (g *UnoGame) canCardBePlayed(c Card) bool {
+	topColor := g.discardPile.cards[0].color
+	topValue := g.discardPile.cards[0].value
+	if g.forcedColor == 0 && (c.color == topColor || c.value == topValue) {
+		return true
+	}
+	if g.forcedColor > 0 && c.color == g.forcedColor {
+		return true
+	}
+	if c.color == Black {
+		return true
+	}
+
+	return false
+}
+
 func (g *UnoGame) getHumanChoice() []CardCandidate {
 	log.Printf("%s's hand:\n", g.GetActivePlayerName())
 	log.Printf("%s\n", g.Players[g.activePlayer].handToString())
 
 	var choice int
 	fmt.Scanf("%d", &choice)
-	return []CardCandidate{{choice, 1}}
+	// TODO: Why is this skipped sometimes?
+
+	if choice >= 0 && choice < len(g.Players[g.activePlayer].hand) {
+		if g.canCardBePlayed(g.Players[g.activePlayer].hand[choice]) {
+			return []CardCandidate{{choice, 1}}
+		}
+	}
+	return []CardCandidate{}
 }
 
 func (g *UnoGame) PlayOneTurn() bool {
