@@ -260,7 +260,7 @@ func (g *UnoGame) getHumanChoice() []CardCandidate {
 	for !validChoice {
 		num, err := fmt.Scanf("%d\n", &choice)
 		if err != nil {
-			panic(err)
+			panic(err) // TODO: handle bad input
 		}
 		if num == 1 {
 			validChoice = true
