@@ -7,12 +7,12 @@ import (
 type Color int
 
 const (
-	Black   Color = 0
+	NoColor Color = 0
 	Red     Color = 1
 	Green   Color = 2
 	Blue    Color = 3
 	Yellow  Color = 4
-	NoColor Color = -1
+	Black   Color = -1
 )
 
 var colorNames = map[Color]string{

@@ -1,5 +1,10 @@
 package gouno
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Strategy int
 
 const (
@@ -19,6 +24,7 @@ type Player struct {
 	hand      []Card
 	strategy  Strategy
 	colorKept Color
+	Human     bool
 }
 
 func (p *Player) getStrongestColor() Color {
@@ -40,34 +46,45 @@ func (p *Player) getStrongestColor() Color {
 	}
 
 	return Color(maxIndex + 1)
-
 }
 
 func (g *UnoGame) scoreCandidates(candidates []CardCandidate, s Strategy) []CardCandidate {
 	switch s {
 	case StrategyAggressive:
 		for i, c := range candidates {
-			if g.players[g.activePlayer].hand[c.index].value >= 100 {
+			if g.Players[g.activePlayer].hand[c.index].value >= 100 {
 				candidates[i].score++
 			}
 		}
 	case StrategyChangeColor:
 	case StrategyKeepColor:
-		if g.players[g.activePlayer].colorKept == NoColor {
-			g.players[g.activePlayer].colorKept = g.players[g.activePlayer].getStrongestColor()
+		if g.Players[g.activePlayer].colorKept == NoColor {
+			g.Players[g.activePlayer].colorKept = g.Players[g.activePlayer].getStrongestColor()
 		}
 		cnt := 0
 		for i, c := range candidates {
-			if g.players[g.activePlayer].hand[c.index].color == g.players[g.activePlayer].colorKept {
+			if g.Players[g.activePlayer].hand[c.index].color == g.Players[g.activePlayer].colorKept {
 				candidates[i].score++
 				cnt++
 			}
 		}
 		if cnt == 0 {
-			g.players[g.activePlayer].colorKept = NoColor
+			g.Players[g.activePlayer].colorKept = NoColor
 		}
 	case StrategyRandom:
 	default:
 	}
 	return candidates
+}
+
+func (p *Player) handToString() string {
+	var out strings.Builder
+	for i, c := range p.hand {
+		out.WriteString(fmt.Sprintf("(%d): %v", i, c))
+		if i < len(p.hand)-1 {
+			out.WriteString(", ")
+		} 
+	}
+
+	return out.String()
 }

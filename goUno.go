@@ -23,14 +23,18 @@ func main() {
 
 	var g gouno.UnoGame
 
-	cnt := make([]int, 4)
+	players := []string{"Christin", "Daniel", "Julia"}
+
+	cnt := map[string]int{}
 	turns := map[int]int{}
 
 	for round := 0; round < 1; round++ {
-		g.Initialize([]string{"Christin", "Julia", "Daniel"})
+		g.Initialize(players)
 
-		// g.players[2].strategy = StrategyAggressive + StrategyKeepColor
-		// g.players[2].strategy = StrategyKeepColor
+		g.Players[1].Human = true
+
+		// g.Players[2].strategy = StrategyAggressive + StrategyKeepColor
+		// g.Players[2].strategy = StrategyKeepColor
 
 		stopGame := false
 		for i := 1; !stopGame; i++ {
@@ -42,7 +46,7 @@ func main() {
 			}
 		}
 
-		cnt[g.GetActivePlayerIndex()]++
+		cnt[g.GetActivePlayerName()]++
 
 		log.Printf("Game over, Player %s has won.\n\n", g.GetActivePlayerName())
 	}
