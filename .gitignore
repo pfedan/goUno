@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 analysis/
-*.exe
 __debug*
-=======
 # Binaries for programs and plugins
 *.exe
 *.exe~
@@ -18,4 +15,3 @@ __debug*
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
->>>>>>> cefac9f17a8abdd81b20f72b0e4efa18756269ed
