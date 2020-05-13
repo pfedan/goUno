@@ -80,10 +80,10 @@ func (g *UnoGame) scoreCandidates(candidates []CardCandidate, s Strategy) []Card
 func (p *Player) handToString() string {
 	var out strings.Builder
 	for i, c := range p.hand {
-		out.WriteString(fmt.Sprintf("(%d): %v", i, c))
+		out.WriteString(fmt.Sprintf("(%d): %v", i+1, c)) // print from 1
 		if i < len(p.hand)-1 {
 			out.WriteString(", ")
-		} 
+		}
 	}
 
 	return out.String()

@@ -255,8 +255,19 @@ func (g *UnoGame) getHumanChoice() []CardCandidate {
 	log.Printf("%s\n", g.Players[g.activePlayer].handToString())
 
 	var choice int
-	fmt.Scanf("%d", &choice)
-	// TODO: Why is this skipped sometimes?
+	validChoice := false
+
+	for !validChoice {
+		num, err := fmt.Scanf("%d\n", &choice)
+		if err != nil {
+			panic(err)
+		}
+		if num == 1 {
+			validChoice = true
+		}
+	}
+
+	choice-- //print from 1, first index is 0
 
 	if choice >= 0 && choice < len(g.Players[g.activePlayer].hand) {
 		if g.canCardBePlayed(g.Players[g.activePlayer].hand[choice]) {
@@ -287,5 +298,6 @@ func (g *UnoGame) GetActivePlayerIndex() int {
 }
 
 func (g *UnoGame) GetActivePlayerName() string {
+	// time.Sleep(200 * time.Millisecond)
 	return g.Players[g.activePlayer].name
 }
