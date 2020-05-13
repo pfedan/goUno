@@ -13,6 +13,13 @@ type UnoGame struct {
 	direction    bool // true: clockwise, false: anti-clockwise
 	activePlayer int
 	forcedColor  Color
+	Muted        bool
+}
+
+func (g *UnoGame) Printf(format string, v ...interface{}) {
+	if !g.Muted {
+		log.Printf(format, v...)
+	}
 }
 
 func (g *UnoGame) generateNewDeck() {
@@ -52,13 +59,13 @@ func (g *UnoGame) playerDrawsCard(playerNumber int) {
 	g.Players[playerNumber].hand = append(g.Players[playerNumber].hand, g.drawPile.cards[0])
 	g.drawPile.cards = g.drawPile.cards[1:]
 
-	log.Printf("Player %s draws card: %+v\n", g.Players[playerNumber].name, g.Players[playerNumber].hand[len(g.Players[playerNumber].hand)-1])
+	g.Printf("Player %s draws card: %+v\n", g.Players[playerNumber].name, g.Players[playerNumber].hand[len(g.Players[playerNumber].hand)-1])
 
 	if len(g.drawPile.cards) == 0 {
 		g.drawPile.cards = append(g.drawPile.cards, g.discardPile.cards[1:]...)
 		g.discardPile.cards = g.discardPile.cards[:1]
 
-		log.Printf("Reshuffling discard pile: %d cards.\n", len(g.drawPile.cards))
+		g.Printf("Reshuffling discard pile: %d cards.\n", len(g.drawPile.cards))
 
 		var s = ShuffleSettings{
 			DeckSize:                  len(g.drawPile.cards),
@@ -111,7 +118,7 @@ func (g *UnoGame) Initialize(playerList []string) {
 	g.discardPile.cards = append(g.discardPile.cards, g.drawPile.cards[0])
 	g.drawPile.cards = g.drawPile.cards[1:]
 
-	log.Printf("First card: %+v\n", g.discardPile.cards[0])
+	g.Printf("First card: %+v\n", g.discardPile.cards[0])
 
 	g.activePlayer = 0
 }
@@ -197,9 +204,9 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 	g.forcedColor = NoColor
 
 	if lenHand == 1 {
-		log.Printf("Player %s: UNO!\n", g.GetActivePlayerName())
+		g.Printf("Player %s: UNO!\n", g.GetActivePlayerName())
 	}
-	log.Printf("Player %s plays %+v\n", g.GetActivePlayerName(), g.discardPile.cards[0])
+	g.Printf("Player %s plays %+v\n", g.GetActivePlayerName(), g.discardPile.cards[0])
 
 	switch playedCardValue {
 	case SkipCard:
@@ -215,14 +222,14 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 		g.setNextPlayer() // skip next player
 	case WildCard:
 		g.forcedColor = g.Players[g.activePlayer].getStrongestColor()
-		log.Printf("Player %s: WildCard wish: %s\n", g.GetActivePlayerName(), colorNames[g.forcedColor])
+		g.Printf("Player %s: WildCard wish: %s\n", g.GetActivePlayerName(), colorNames[g.forcedColor])
 	case WildDrawFourCard:
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.forcedColor = g.Players[g.activePlayer].getStrongestColor()
-		log.Printf("Player %s: WildCard wish: %s\n", g.GetActivePlayerName(), colorNames[g.forcedColor])
+		g.Printf("Player %s: WildCard wish: %s\n", g.GetActivePlayerName(), colorNames[g.forcedColor])
 		g.setNextPlayer() // skip next player
 	}
 
@@ -251,8 +258,8 @@ func (g *UnoGame) canCardBePlayed(c Card) bool {
 }
 
 func (g *UnoGame) getHumanChoice() []CardCandidate {
-	log.Printf("%s's hand:\n", g.GetActivePlayerName())
-	log.Printf("%s\n", g.Players[g.activePlayer].handToString())
+	fmt.Printf("%s's hand:\n", g.GetActivePlayerName())
+	fmt.Printf("%s\n", g.Players[g.activePlayer].handToString())
 
 	var choice int
 	validChoice := false
