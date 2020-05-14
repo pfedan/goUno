@@ -52,7 +52,7 @@ func (g *UnoGame) scoreCandidates(candidates []CardCandidate, s Strategy) []Card
 	switch s {
 	case StrategyAggressive:
 		for i, c := range candidates {
-			if g.Players[g.activePlayer].hand[c.index].value >= 100 {
+			if g.Players[g.activePlayer].hand[c.index].face >= 100 {
 				candidates[i].score++
 			}
 		}

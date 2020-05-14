@@ -30,11 +30,11 @@ func (g *UnoGame) generateNewDeck() {
 	// Generate number cards
 	for c := Red; c <= Yellow; c++ {
 		for v := 0; v <= 9; v++ {
-			g.drawPile.cards[i] = Card{c, CardValue(v)}
+			g.drawPile.cards[i] = Card{c, CardType(v)}
 			i++
 		}
 		for v := 1; v <= 9; v++ {
-			g.drawPile.cards[i] = Card{c, CardValue(v)}
+			g.drawPile.cards[i] = Card{c, CardType(v)}
 			i++
 		}
 	}
@@ -116,7 +116,7 @@ func (g *UnoGame) Initialize(playerList []string) {
 		}
 	}
 
-	for g.drawPile.cards[0].value == WildDrawFourCard {
+	for g.drawPile.cards[0].face == WildDrawFourCard {
 		g.drawPile.shuffle(s)
 	}
 
@@ -156,12 +156,12 @@ func (g *UnoGame) setNextPlayer() {
 
 func (g *UnoGame) getCardCandidates() []CardCandidate {
 	topColor := g.discardPile.cards[0].color
-	topValue := g.discardPile.cards[0].value
+	topValue := g.discardPile.cards[0].face
 	var candidates []CardCandidate
 	playerNumber := g.activePlayer
 
 	for i, thisCard := range g.Players[playerNumber].hand {
-		if g.forcedColor == 0 && (thisCard.color == topColor || thisCard.value == topValue) {
+		if g.forcedColor == 0 && (thisCard.color == topColor || thisCard.face == topValue) {
 			candidates = append(candidates, CardCandidate{i, 0})
 		}
 		if g.forcedColor > 0 && thisCard.color == g.forcedColor {
@@ -226,7 +226,7 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 }
 
 func (g *UnoGame) applyCard(c Card) {
-	switch c.value {
+	switch c.face {
 	case SkipCard:
 		g.setNextPlayer() // skip next player
 	case ReverseCard:
@@ -257,8 +257,8 @@ func (g *UnoGame) applyCard(c Card) {
 
 func (g *UnoGame) canCardBePlayed(c Card) bool {
 	topColor := g.discardPile.cards[0].color
-	topValue := g.discardPile.cards[0].value
-	if g.forcedColor == 0 && (c.color == topColor || c.value == topValue) {
+	topValue := g.discardPile.cards[0].face
+	if g.forcedColor == 0 && (c.color == topColor || c.face == topValue) {
 		return true
 	}
 	if g.forcedColor > 0 && c.color == g.forcedColor {

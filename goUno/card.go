@@ -24,17 +24,17 @@ var colorNames = map[Color]string{
 	NoColor: `NoColor`,
 }
 
-type CardValue int
+type CardType int
 
 const (
-	SkipCard         CardValue = 100
-	ReverseCard      CardValue = 101
-	DrawTwoCard      CardValue = 102
-	WildCard         CardValue = 103
-	WildDrawFourCard CardValue = 104
+	SkipCard         CardType = 100
+	ReverseCard      CardType = 101
+	DrawTwoCard      CardType = 102
+	WildCard         CardType = 103
+	WildDrawFourCard CardType = 104
 )
 
-var valueNames = map[CardValue]string{
+var valueNames = map[CardType]string{
 	0: `0`, 1: `1`, 2: `2`, 3: `3`, 4: `4`, 5: `5`, 6: `6`, 7: `7`, 8: `8`, 9: `9`,
 	SkipCard:         `SkipCard`,
 	ReverseCard:      `ReverseCard`,
@@ -45,11 +45,11 @@ var valueNames = map[CardValue]string{
 
 type Card struct {
 	color Color
-	value CardValue
+	face  CardType
 }
 
 func (c Card) points() int {
-	switch val := c.value; {
+	switch val := c.face; {
 	case val == SkipCard:
 		fallthrough
 	case val == ReverseCard:
@@ -66,7 +66,7 @@ func (c Card) points() int {
 }
 
 func (c Card) String() string {
-	return fmt.Sprintf("%s (%s)", valueNames[c.value], colorNames[c.color])
+	return fmt.Sprintf("%s (%s)", valueNames[c.face], colorNames[c.color])
 }
 
 type Deck struct {
