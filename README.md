@@ -39,5 +39,10 @@ Count of points per game: map[15:1 16:7 17:22 18:99 19:258 20:567 21:942 22:1391
 ```
 
 Plotting the above counts of turns per game as relative and cumulative frequencies will result in the following graphs:
+
 ![Relative and cumulative frequency of turns](doc/example_4players_100k_rounds.png)
+
 ![Relative and cumulative frequency of points](doc/example_4players_100k_points.png)
+
+For instance you can see, that if everyone plays aggressively, the winner gets higher points at the end of a round:
+![Random vs. aggressive strategy](doc/example_4players_100k_points_rand_vs_aggressive.png)
