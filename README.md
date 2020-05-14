@@ -22,7 +22,7 @@ go build
 Run the game (using different parameters):
 ```bash
 ./goUno.exe # Default: Two players "A" and "B", non-human, 1 round
-./goUno.exe -p "Adam,Berta,Charles" # Three players with custom names
+./goUno.exe -p Adam,Berta,Charles # Three players with custom names
 ./goUno.exe -p Human,Computer1,Computer2 -h 1,0,0 # Three players, one human player defined with the -h flag list
 ```
 
@@ -37,5 +37,5 @@ Count of turns per game: map[15:1 16:2 17:30 18:91 19:281 20:533 21:1002 22:1419
 88:389 89:343 90:326 91:309 92:281 93:255 94:256 95:253 96:225 97:211 98:205 99:217 100:210 101:180 102:190 103:170 104:159 105:143 106:132 107:127 108:128 109:128 110:117 111:128 112:94 113:87 114:97 115:79 116:111 117:72 118:51 119:64 120:68 121:66 122:59 123:51 124:54 125:48 126:44 127:30 128:42 129:42 130:41 131:27 132:43 133:25 134:29 135:28 136:23 137:28 138:28 139:15 140:19 141:17 142:19 143:19 144:15 145:15 146:9 147:15 148:15 149:8 150:9 151:8 152:13 153:6 154:7 155:3 156:7 157:7 158:11 159:5 160:3 161:5 162:4 163:3 164:6 165:4 166:3 167:2 168:6 169:7 170:3 171:3 172:8 173:2 174:5 175:6 176:4 177:2 178:2 179:1 180:1 181:1 184:2 185:1 186:2 187:1 188:2 189:1 191:2 192:1 194:2 195:2 202:1 204:1 205:1 208:1 212:1 215:1 220:1 221:1 233:1 235:2 250:1 258:1 263:1 271:1]
 ```
 
-Plotting the above counts of turns per game will result in the following graph:
+Plotting the above counts of turns per game as relative and cumulative frequencies will result in the following graph:
 ![Relative and cumulative frequency](doc/example_4players_100k_rounds.png)
