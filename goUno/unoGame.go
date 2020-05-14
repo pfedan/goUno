@@ -133,7 +133,7 @@ func (g *UnoGame) Initialize(playerList []string) {
 
 func (g *UnoGame) getNextPlayerIndex() int {
 	nextPlayerIndex := g.activePlayer
-	if g.direction {
+	if !g.direction {
 		nextPlayerIndex++
 		if nextPlayerIndex == len(g.Players) {
 			nextPlayerIndex = 0
