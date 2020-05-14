@@ -14,6 +14,7 @@ type UnoGame struct {
 	activePlayer int
 	forcedColor  Color
 	Muted        bool
+	Turns        int
 }
 
 func (g *UnoGame) Printf(format string, v ...interface{}) {
@@ -115,12 +116,19 @@ func (g *UnoGame) Initialize(playerList []string) {
 		}
 	}
 
+	for g.drawPile.cards[0].value == WildDrawFourCard {
+		g.drawPile.shuffle(s)
+	}
+
 	g.discardPile.cards = append(g.discardPile.cards, g.drawPile.cards[0])
 	g.drawPile.cards = g.drawPile.cards[1:]
 
 	g.Printf("First card: %+v\n", g.discardPile.cards[0])
 
 	g.activePlayer = 0
+	g.Turns = 0
+
+	g.applyCard(g.discardPile.cards[0])
 }
 
 func (g *UnoGame) getNextPlayerIndex() int {
@@ -192,7 +200,6 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 	}
 
 	playedCardIndex := candidateIndices[rand.Intn(len(candidateIndices))]
-	playedCardValue := g.Players[g.activePlayer].hand[playedCardIndex].value
 
 	g.discardPile.cards = append([]Card{g.Players[g.activePlayer].hand[playedCardIndex]}, g.discardPile.cards...)
 
@@ -208,7 +215,18 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 	}
 	g.Printf("Player %s plays %+v\n", g.GetActivePlayerName(), g.discardPile.cards[0])
 
-	switch playedCardValue {
+	g.applyCard(g.discardPile.cards[0])
+
+	switch lenHand {
+	case 0:
+		return true
+	default:
+		return false
+	}
+}
+
+func (g *UnoGame) applyCard(c Card) {
+	switch c.value {
 	case SkipCard:
 		g.setNextPlayer() // skip next player
 	case ReverseCard:
@@ -224,6 +242,9 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 		g.forcedColor = g.Players[g.activePlayer].getStrongestColor()
 		g.Printf("Player %s: WildCard wish: %s\n", g.GetActivePlayerName(), colorNames[g.forcedColor])
 	case WildDrawFourCard:
+		if g.Turns == 0 {
+			break
+		}
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
 		g.playerDrawsCard(g.getNextPlayerIndex())
@@ -231,13 +252,6 @@ func (g *UnoGame) playOutCard(candidates []CardCandidate) bool {
 		g.forcedColor = g.Players[g.activePlayer].getStrongestColor()
 		g.Printf("Player %s: WildCard wish: %s\n", g.GetActivePlayerName(), colorNames[g.forcedColor])
 		g.setNextPlayer() // skip next player
-	}
-
-	switch lenHand {
-	case 0:
-		return true
-	default:
-		return false
 	}
 }
 
@@ -286,6 +300,7 @@ func (g *UnoGame) getHumanChoice() []CardCandidate {
 
 func (g *UnoGame) PlayOneTurn() bool {
 	// log.Printf("Hands: %s(%d), %s(%d), %s(%d)\n", g.players[0].name, len(g.players[0].hand), g.players[1].name, len(g.players[1].hand), g.players[2].name, len(g.players[2].hand))
+	g.Turns++
 	candidates := g.getCardCandidates()
 	if g.Players[g.activePlayer].Human {
 		candidates = g.getHumanChoice()

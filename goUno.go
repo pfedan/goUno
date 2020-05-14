@@ -71,7 +71,7 @@ func main() {
 			g.Printf("Turn %d:\n", i)
 			stopGame = g.PlayOneTurn()
 			if stopGame {
-				turns[i]++
+				turns[g.Turns]++
 				break
 			}
 		}

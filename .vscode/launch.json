@@ -11,7 +11,7 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {},
-            "args": ["-p","Daniel,Christin,Julia"]
+            "args": ["-p","Adam,Berta,Charles"]
         },
         {
             "name": "1 round 3 players 1 human",
@@ -20,7 +20,7 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {},
-            "args": ["-p","Daniel,Christin,Julia","-h","1,0,0"]
+            "args": ["-p","Adam,Berta,Charles","-h","1,0,0"]
         },
         {
             "name": "10000 rounds muted",
@@ -29,7 +29,7 @@
             "mode": "auto",
             "program": "${fileDirname}",
             "env": {},
-            "args": ["-m", "-r10000"]
+            "args": ["-m", "-r10000", "-p", "A,B,C"]
         }
     ]
 }

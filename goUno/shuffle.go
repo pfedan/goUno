@@ -22,6 +22,11 @@ type ShuffleSettings struct {
 
 func (d Deck) divide(p float32, u int) ([]Card, []Card) {
 	cut := int(float32(len(d.cards))*p) - u/2 + rand.Intn(u)
+	if cut < 0 {
+		cut = 0
+	} else if cut > (len(d.cards) - 1) {
+		cut = len(d.cards) - 1
+	}
 
 	return d.cards[:cut], d.cards[cut:]
 }

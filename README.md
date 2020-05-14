@@ -44,5 +44,5 @@ Plotting the above counts of turns per game as relative and cumulative frequenci
 
 ![Relative and cumulative frequency of points](doc/example_4players_100k_points.png)
 
-For instance you can see, that if everyone plays aggressively, the winner gets higher points at the end of a round:
+For instance you can see, that if everyone plays aggressively, the winner gets more points at the end of a round:
 ![Random vs. aggressive strategy](doc/example_4players_100k_points_rand_vs_aggressive.png)
