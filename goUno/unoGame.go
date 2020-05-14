@@ -88,7 +88,7 @@ func (g *UnoGame) Initialize(playerList []string) {
 	g.Players = make([]Player, len(playerList))
 	for i := range g.Players {
 		g.Players[i].name = playerList[i]
-		g.Players[i].strategy = StrategyRandom
+		g.Players[i].Strategy = StrategyRandom
 		g.Players[i].colorKept = NoColor
 	}
 
@@ -290,7 +290,7 @@ func (g *UnoGame) PlayOneTurn() bool {
 	if g.Players[g.activePlayer].Human {
 		candidates = g.getHumanChoice()
 	} else {
-		candidates = g.scoreCandidates(candidates, g.Players[g.activePlayer].strategy)
+		candidates = g.scoreCandidates(candidates, g.Players[g.activePlayer].Strategy)
 	}
 
 	if g.playOutCard(candidates) {

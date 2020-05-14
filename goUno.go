@@ -63,6 +63,7 @@ func main() {
 		g.Initialize(players)
 		for i, humanFlag := range gameParams.humanFlags {
 			g.Players[i].Human = humanFlag
+			// g.Players[i].Strategy = gouno.StrategyAggressive
 		}
 
 		stopGame := false
@@ -90,5 +91,5 @@ func main() {
 	log.Printf("Wins per Player: %+v\n", cnt)
 	log.Printf("Total points per Player: %+v\n", pointSum)
 	log.Printf("Count of turns per game: %+v\n", turns)
-	log.Printf("Count of points per game: %+v\n", turns)
+	log.Printf("Count of points per game: %+v\n", pointsPerGame)
 }

@@ -22,7 +22,7 @@ type CardCandidate struct {
 type Player struct {
 	name      string
 	hand      []Card
-	strategy  Strategy
+	Strategy  Strategy
 	colorKept Color
 	Human     bool
 }
