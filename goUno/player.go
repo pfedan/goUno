@@ -88,3 +88,11 @@ func (p *Player) handToString() string {
 
 	return out.String()
 }
+
+func (p *Player) GetPoints() int {
+	points := 0
+	for _, c := range p.hand {
+		points += c.points()
+	}
+	return points
+}

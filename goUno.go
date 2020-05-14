@@ -53,6 +53,7 @@ func main() {
 	players := gameParams.playerNames
 
 	cnt := map[string]int{}
+	pointSum := map[string]int{}
 	turns := map[int]int{}
 
 	for round := 0; round < gameParams.roundCount; round++ {
@@ -75,9 +76,16 @@ func main() {
 
 		cnt[g.GetActivePlayerName()]++
 
-		g.Printf("Game over, Player %s has won.\n\n", g.GetActivePlayerName())
+		points := 0
+		for _, p := range g.Players {
+			points += p.GetPoints()
+		}
+		pointSum[g.GetActivePlayerName()] += points
+
+		g.Printf("Game over, Player %s has won with %d points.\n\n", g.GetActivePlayerName(), points)
 	}
 
 	log.Printf("Wins per Player: %+v\n", cnt)
+	log.Printf("Total points per Player: %+v\n", pointSum)
 	log.Printf("Count of turns per game: %+v\n", turns)
 }

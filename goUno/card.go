@@ -48,6 +48,23 @@ type Card struct {
 	value CardValue
 }
 
+func (c Card) points() int {
+	switch val := c.value; {
+	case val == SkipCard:
+		fallthrough
+	case val == ReverseCard:
+		fallthrough
+	case val == DrawTwoCard:
+		return 20
+	case val == WildCard:
+		return 50
+	case val == WildDrawFourCard:
+		return 70
+	default:
+		return int(val)
+	}
+}
+
 func (c Card) String() string {
 	return fmt.Sprintf("%s (%s)", valueNames[c.value], colorNames[c.color])
 }
