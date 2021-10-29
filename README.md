@@ -6,7 +6,7 @@ A Go implementation of a popular card game: UNO
 ## Motivation
 This project was started with a variety of intentions:
 - **Shuffling**: I wanted to analyze the [Riffle](https://en.wikipedia.org/wiki/Shuffling#Riffle) technique for its randomness and its limits.
-- **Strategies**: Is it advantageus to play aggressively / stay with a certain color / switch colors if possible? In order to analyse new strategies, one can implement more cases in `scoreCandidates(...)` in [player.go](goUno/player.go). 
+- **Strategies**: Is it advantageous to play aggressively / stay with a certain color / switch colors if possible? In order to analyse new strategies, one can implement more cases in `scoreCandidates(...)` in [player.go](goUno/player.go). 
 - **Entertainment**: Just play UNO against a computer or together with other human players. 
 - **Web readiness**: It will be rather straight forward to integrate the game engine as a server towards a web frontend that provides the game to users that wish for a more convenient UI than CLI.
 
